@@ -44,6 +44,7 @@ class it8951e : public PollingComponent,
   float get_setup_priority() const override;
   void set_reset_pin(GPIOPin *reset) { this->reset_pin_ = reset; }
   void set_busy_pin(GPIOPin *busy) { this->busy_pin_ = busy; }
+  void set_en_pin(GPIOPin *en) { this->en_pin_ = en; }
 
   void display();
   void initialize();
@@ -81,6 +82,7 @@ class it8951e : public PollingComponent,
   GPIOPin *reset_pin_{nullptr};
   GPIOPin *cs_pin_;
   GPIOPin *busy_pin_{nullptr};
+  GPIOPin *en_pin_{nullptr};
   virtual int idle_timeout_() { return 1000; }  // NOLINT(readability-identifier-naming)
 
   IT8951DevInfo gstI80DevInfo;

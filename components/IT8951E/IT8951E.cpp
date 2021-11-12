@@ -112,6 +112,10 @@ void it8951e::setup_pins_() {
   if (this->busy_pin_ != nullptr) {
     this->busy_pin_->setup();  // INPUT
   }
+  if (this->en_pin_ != nullptr) {
+    this->en_pin_->setup();  // OUTPUT
+    this->en_pin_->digital_write(true);
+  }
   this->spi_setup();
 
   this->reset_();
@@ -133,6 +137,9 @@ void it8951e::initialize() {
   this->IT8951WriteReg(I80CPCR, 0x0001);
 }
 
+void it8951e::enablePower() { this->en_pin_->digital_write(true); }
+void it8951e::disablePower() { this->en_pin_->digital_write(false); }
+
 float it8951e::get_setup_priority() const { return setup_priority::PROCESSOR; }
 
 void it8951e::update() {
@@ -140,10 +147,10 @@ void it8951e::update() {
   this->display();
 }
 void it8951e::fill(Color color) {
-//   // flip logic
-//   const uint8_t fill = color.is_on() ? 0x00 : 0xFF;
-//   for (uint32_t i = 0; i < this->get_buffer_length_(); i++)
-//     this->buffer_[i] = fill;
+  // flip logic
+  const uint8_t fill = ((color.white << 4) & 0xF) | (color.white & 0xF);
+  for (uint32_t i = 0; i < this->get_buffer_length_(); i++)
+    this->buffer_[i] = fill;
 }
 void HOT it8951e::draw_absolute_pixel_internal(int x, int y, Color color) {
   if (x >= pstDevInfo->usPanelW || y >= pstDevInfo->usPanelH || x < 0 || y < 0)
